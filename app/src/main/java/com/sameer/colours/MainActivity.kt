@@ -36,6 +36,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.sameer.colours.ui.theme.ColoursTheme
 import com.sameer.colours.ui.theme.colors
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 import kotlin.random.Random
 
 class MainActivity : ComponentActivity() {
@@ -62,10 +65,10 @@ class MainActivity : ComponentActivity() {
 @Preview
 fun MainWork() {
     var colrlist = remember { mutableStateListOf(
-        colors("D7415F"),
-        colors("E4AAFF"),
-        colors("7FC3E9"),
-        colors("ECA02F")) }
+        colors("D7415F","26/12/2024"),
+        colors("E4AAFF","26/12/2024"),
+        colors("7FC3E9","26/12/2024"),
+        colors("ECA02F","26/12/2024")) }
     Scaffold(
         topBar = {
             TopAppBar(
@@ -104,7 +107,8 @@ fun MainWork() {
                 onClick = {
                           val newcol = getnewcolor();
                     println(""+newcol+"----------------------------")
-                    colrlist.add(colors(newcol.toString()))
+                    val date = getdate()
+                    colrlist.add(colors(newcol.toString(),date.toString()))
                 },
                 containerColor = Color(android.graphics.Color.parseColor("#FFB6B9FF")),
             ) {
@@ -146,16 +150,23 @@ fun MainWork() {
 
         ) {
             items(colrlist) { color ->
-              CardCompose(color.colorscode)
+              CardCompose(color.colorscode,color.date)
 
             }
         }
     }
 }
 
+fun getdate(): Any {
+    val stamp = System.currentTimeMillis()
+    val dateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+    val date = Date(stamp)
+    return dateFormat.format(date)
+}
+
 
 @Composable
-fun CardCompose(color: String) {
+fun CardCompose(color: String, created:String) {
     Row(
 
 
@@ -197,7 +208,7 @@ fun CardCompose(color: String) {
                         )
                     )
                     Text(
-                        text = "12/05/2023", style = TextStyle(
+                        text = created, style = TextStyle(
                             color = Color.White,
                             fontFamily = FontFamily.Monospace,
                             fontSize = 12.sp
@@ -214,6 +225,8 @@ fun getnewcolor(): Any {
 
     val col = Random.nextInt(0xFFFFFF)
     return col.toString(16).padStart(6, '0').toUpperCase()
+
+
 
 }
 
