@@ -15,6 +15,9 @@ import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -29,6 +32,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.sameer.colours.ui.theme.ColoursTheme
 import com.sameer.colours.ui.theme.colors
+import kotlin.random.Random
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -53,6 +57,10 @@ class MainActivity : ComponentActivity() {
 @Composable
 @Preview
 fun MainWork() {
+    var colrlist = remember { mutableStateListOf(colors("D7415F"),
+        colors("E4AAFF"),
+        colors("7FC3E9"),
+        colors("ECA02F")) }
     Scaffold(
         topBar = {
             TopAppBar(
@@ -73,7 +81,9 @@ fun MainWork() {
                 floatingActionButton = {
             FloatingActionButton(
                 onClick = {
-
+                          val newcol = getnewcolor();
+                    println(""+newcol+"----------------------------")
+                    colrlist.add(colors(newcol.toString()))
                 },
                 containerColor = Color(android.graphics.Color.parseColor("#FFB6B9FF")),
             ) {
@@ -103,12 +113,7 @@ fun MainWork() {
         }
     ) { paddingValues ->
 
-        val cardColor = listOf(
-            colors("D7415F"),
-            colors("E4AAFF"),
-            colors("7FC3E9"),
-            colors("ECA02F")
-        )
+        val cardColor = colrlist
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
@@ -119,6 +124,13 @@ fun MainWork() {
             }
         }
     }
+}
+
+fun getnewcolor(): Any {
+
+        val col = Random.nextInt(0xFFFFFF)
+        return col.toString(16).padStart(6, '0').toUpperCase()
+
 }
 
 @Composable
