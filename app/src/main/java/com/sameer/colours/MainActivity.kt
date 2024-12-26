@@ -21,6 +21,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.Role.Companion.Image
 import androidx.compose.ui.text.TextStyle
@@ -68,9 +69,25 @@ fun MainWork() {
                     Text(text = "Colour App")
                 },
                 actions = {
-                    IconButton(onClick = { /* Handle search click */ }) {
-                        Icon(Icons.Default.Search, contentDescription = "Search")
+                    Button(modifier = Modifier.padding(end = 4.dp), onClick = {  },  colors = ButtonDefaults.buttonColors(
+                        containerColor = Color(android.graphics.Color.parseColor("#FFB6B9FF")),
+                    ) ) {
+                        Text(
+                            text = "12",
+                            color = Color.White,
+                            style = TextStyle(fontSize = 18.sp, fontFamily = FontFamily.Monospace, fontWeight = FontWeight.Bold)
+                        )
+                        Spacer(modifier = Modifier.width(10.dp))
+                        Image(
+
+                            painter = painterResource(id = R.drawable.refresh),
+                            contentDescription = "Refresh",
+                            modifier = Modifier
+                                .width(20.dp)
+                                .height(20.dp)
+                        )
                     }
+
                 },
                 colors = TopAppBarDefaults.smallTopAppBarColors(
                     containerColor = Color(0xFF5659A4),
