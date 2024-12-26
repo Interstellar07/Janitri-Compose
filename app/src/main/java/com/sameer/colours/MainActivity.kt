@@ -7,6 +7,9 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -58,7 +61,8 @@ class MainActivity : ComponentActivity() {
 @Composable
 @Preview
 fun MainWork() {
-    var colrlist = remember { mutableStateListOf(colors("D7415F"),
+    var colrlist = remember { mutableStateListOf(
+        colors("D7415F"),
         colors("E4AAFF"),
         colors("7FC3E9"),
         colors("ECA02F")) }
@@ -130,31 +134,31 @@ fun MainWork() {
         }
     ) { paddingValues ->
 
-        val cardColor = colrlist
-        LazyColumn(
+
+        LazyVerticalGrid(
+
+            columns = GridCells.Fixed(2),
             modifier = Modifier
                 .fillMaxSize()
-                .padding(paddingValues)
+                .padding(start = 15.dp, top = paddingValues.calculateTopPadding()),
+
+
+
         ) {
-            items(cardColor) { card ->
-                CardCompose(card.colorscode)
+            items(colrlist) { color ->
+              CardCompose(color.colorscode)
+
             }
         }
     }
 }
 
-fun getnewcolor(): Any {
-
-        val col = Random.nextInt(0xFFFFFF)
-        return col.toString(16).padStart(6, '0').toUpperCase()
-
-}
 
 @Composable
 fun CardCompose(color: String) {
     Row(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.Center
+
+
     ) {
         Card(
             modifier = Modifier
@@ -168,14 +172,14 @@ fun CardCompose(color: String) {
         ) {
             Column(modifier = Modifier.padding(start = 2.dp, top = 2.dp)) {
                 Text(
-                    text = "#FF38745", modifier = Modifier.padding(start = 3.dp), style = TextStyle(
+                    text = "#"+color, modifier = Modifier.padding(start = 3.dp), style = TextStyle(
                         color = Color.White,
                         fontFamily = FontFamily.Monospace
                     )
                 )
                 Divider(
                     modifier = Modifier
-                        .width(80.dp)
+                        .width(70.dp)
                         .padding(start = 3.dp),
                     color = Color.White,
                     thickness = 1.dp
@@ -189,65 +193,27 @@ fun CardCompose(color: String) {
                         text = "Created at", style = TextStyle(
                             color = Color.White,
                             fontFamily = FontFamily.Monospace,
-                            fontSize = 10.sp
+                            fontSize = 12.sp
                         )
                     )
                     Text(
                         text = "12/05/2023", style = TextStyle(
                             color = Color.White,
                             fontFamily = FontFamily.Monospace,
-                            fontSize = 10.sp
+                            fontSize = 12.sp
                         )
                     )
                 }
             }
         }
         Spacer(modifier = Modifier.width(15.dp))
-        Card(
-            modifier = Modifier
-                .padding(bottom = 5.dp, top = 5.dp)
-                .height(120.dp)
-                .width(180.dp), shape = RoundedCornerShape(10.dp),
-            elevation = CardDefaults.cardElevation(20.dp),
-            colors = CardDefaults.cardColors(
-                containerColor = Color(android.graphics.Color.parseColor("#FF" + color))
-            )
-        ) {
-            Column(modifier = Modifier.padding(start = 2.dp, top = 2.dp)) {
-                Text(
-                    text = "#FF38745", modifier = Modifier.padding(start = 3.dp), style = TextStyle(
-                        color = Color.White,
-                        fontFamily = FontFamily.Monospace
-                    )
-                )
-                Divider(
-                    modifier = Modifier
-                        .width(80.dp)
-                        .padding(start = 3.dp),
-                    color = Color.White,
-                    thickness = 1.dp
-                )
-            }
-            Box(modifier = Modifier
-                .fillMaxSize()
-                .padding(end = 5.dp, bottom = 5.dp)) {
-                Column(modifier = Modifier.align(Alignment.BottomEnd)) {
-                    Text(
-                        text = "Created at", style = TextStyle(
-                            color = Color.White,
-                            fontFamily = FontFamily.Monospace,
-                            fontSize = 10.sp
-                        )
-                    )
-                    Text(
-                        text = "12/05/2023", style = TextStyle(
-                            color = Color.White,
-                            fontFamily = FontFamily.Monospace,
-                            fontSize = 10.sp
-                        )
-                    )
-                }
-            }
-        }
+
     }
 }
+fun getnewcolor(): Any {
+
+    val col = Random.nextInt(0xFFFFFF)
+    return col.toString(16).padStart(6, '0').toUpperCase()
+
+}
+
