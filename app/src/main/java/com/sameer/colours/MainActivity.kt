@@ -1,41 +1,32 @@
 package com.sameer.colours
 
-import android.media.Image
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Menu
-import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.semantics.Role.Companion.Image
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.ViewModelProvider
 import com.sameer.colours.ui.theme.ColoursTheme
-import com.sameer.colours.ui.theme.colors
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -44,6 +35,7 @@ import kotlin.random.Random
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        val appviewmodel = ViewModelProvider(this)[AppViewModel::class.java]
         setContent {
             ColoursTheme {
                 // A surface container using the 'background' color from the theme
@@ -51,7 +43,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    MainWork()
+                    MainWork(appviewmodel)
                 }
             }
         }
@@ -63,12 +55,16 @@ class MainActivity : ComponentActivity() {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 @Preview
-fun MainWork() {
-    var colrlist = remember { mutableStateListOf(
-        colors("D7415F","26/12/2024"),
-        colors("E4AAFF","26/12/2024"),
-        colors("7FC3E9","26/12/2024"),
-        colors("ECA02F","26/12/2024")) }
+fun MainWork(appviewmodel: AppViewModel) {
+
+    val liveDataList = appviewmodel.list.observeAsState(emptyList()).value
+    val colrlist = remember { mutableStateListOf<colors>() }
+    LaunchedEffect(liveDataList) {
+        colrlist.clear()
+        colrlist.addAll(liveDataList.map { entity ->
+            colors(colorscode = entity.ccode, date = entity.tstamp)
+        })
+    }
     Scaffold(
         topBar = {
             TopAppBar(
@@ -107,8 +103,9 @@ fun MainWork() {
                 onClick = {
                           val newcol = getnewcolor();
                     println(""+newcol+"----------------------------")
-                    val date = getdate()
-                    colrlist.add(colors(newcol.toString(),date.toString()))
+
+                    appviewmodel.addEntity(ModelClassEntity(0,newcol.toString(),System.currentTimeMillis().toString()))
+
                 },
                 containerColor = Color(android.graphics.Color.parseColor("#FFB6B9FF")),
             ) {
@@ -150,15 +147,15 @@ fun MainWork() {
 
         ) {
             items(colrlist) { color ->
-              CardCompose(color.colorscode,color.date)
+              CardCompose(color.colorscode, getdate( color.date.toLong()))
 
             }
         }
     }
 }
 
-fun getdate(): Any {
-    val stamp = System.currentTimeMillis()
+fun getdate(stamp:Long): String {
+
     val dateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
     val date = Date(stamp)
     return dateFormat.format(date)
