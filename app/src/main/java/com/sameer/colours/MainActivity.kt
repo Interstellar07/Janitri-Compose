@@ -153,6 +153,7 @@ fun MainWork(appviewmodel: AppViewModel, context: Context) {
 
 
 
+
         ) {
             items(colrlist) { color ->
               CardCompose(color.colorscode, getdate( color.date.toLong()))
