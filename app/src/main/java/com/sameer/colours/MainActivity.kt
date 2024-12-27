@@ -1,6 +1,8 @@
 package com.sameer.colours
 
+import android.content.Context
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
@@ -26,6 +28,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.ViewModelProvider
+import com.google.firebase.Firebase
+import com.google.firebase.database.database
 import com.sameer.colours.ui.theme.ColoursTheme
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -38,12 +42,12 @@ class MainActivity : ComponentActivity() {
         val appviewmodel = ViewModelProvider(this)[AppViewModel::class.java]
         setContent {
             ColoursTheme {
-                // A surface container using the 'background' color from the theme
+
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    MainWork(appviewmodel)
+                    MainWork(appviewmodel,applicationContext)
                 }
             }
         }
@@ -55,14 +59,14 @@ class MainActivity : ComponentActivity() {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 @Preview
-fun MainWork(appviewmodel: AppViewModel) {
+fun MainWork(appviewmodel: AppViewModel, context: Context) {
 
     val liveDataList = appviewmodel.list.observeAsState(emptyList()).value
     val colrlist = remember { mutableStateListOf<colors>() }
     LaunchedEffect(liveDataList) {
         colrlist.clear()
         colrlist.addAll(liveDataList.map { entity ->
-            colors(colorscode = entity.ccode, date = entity.tstamp)
+            colors(colorscode = entity.ccode, date = entity.tstamp,isync = entity.insync)
         })
     }
     Scaffold(
@@ -72,11 +76,16 @@ fun MainWork(appviewmodel: AppViewModel) {
                     Text(text = "Colour App")
                 },
                 actions = {
-                    Button(modifier = Modifier.padding(end = 4.dp), onClick = {  },  colors = ButtonDefaults.buttonColors(
+                    Button(modifier = Modifier.padding(end = 4.dp), onClick = {
+                        Toast.makeText(context, "Syncing with Database", Toast.LENGTH_LONG).show()
+                        sendColorsToFirebase(liveDataList,appviewmodel) {
+
+                        }
+                    },  colors = ButtonDefaults.buttonColors(
                         containerColor = Color(android.graphics.Color.parseColor("#FFB6B9FF")),
                     ) ) {
                         Text(
-                            text = "12",
+                            text =  colrlist.count { !it.isync }.toString(),
                             color = Color.White,
                             style = TextStyle(fontSize = 18.sp, fontFamily = FontFamily.Monospace, fontWeight = FontWeight.Bold)
                         )
@@ -104,7 +113,7 @@ fun MainWork(appviewmodel: AppViewModel) {
                           val newcol = getnewcolor();
                     println(""+newcol+"----------------------------")
 
-                    appviewmodel.addEntity(ModelClassEntity(0,newcol.toString(),System.currentTimeMillis().toString()))
+                    appviewmodel.addEntity(ModelClassEntity(0,newcol.toString(),System.currentTimeMillis().toString(),false))
 
                 },
                 containerColor = Color(android.graphics.Color.parseColor("#FFB6B9FF")),
@@ -226,4 +235,21 @@ fun getnewcolor(): Any {
 
 
 }
+fun sendColorsToFirebase(
+    colorsList: List<ModelClassEntity>,
+    appviewmodel: AppViewModel,
+    onCompletion: () -> Unit
+) {
+    val database = Firebase.database.reference.child("colors")
+    colorsList.filter { !it.insync }.forEach { color ->
+        val key = database.push().key ?: return@forEach
+        database.child(key).setValue(color).addOnCompleteListener { task ->
+            if (task.isSuccessful) {
+               appviewmodel.updatestatus(color.id.toInt())
+            }
+        }
+    }
+    onCompletion()
+}
+
 

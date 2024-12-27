@@ -2,6 +2,7 @@ plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
     id("kotlin-kapt")
+    id("com.google.gms.google-services")
 }
 
 android {
@@ -53,6 +54,7 @@ android {
 dependencies {
 
 
+    implementation("com.google.firebase:firebase-database:21.0.0")
     //room
     val room_version = "2.6.1"
 

@@ -19,4 +19,9 @@ class AppViewModel:ViewModel() {
         }
 
     }
+    fun updatestatus(id: Int) {
+        viewModelScope.launch {
+           appDao.updatesync(id)
+        }
+    }
 }

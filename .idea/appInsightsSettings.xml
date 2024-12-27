@@ -27,10 +27,10 @@
             <InsightsFilterSettings>
               <option name="connection">
                 <ConnectionSetting>
-                  <option name="appId" value="PLACEHOLDER" />
-                  <option name="mobileSdkAppId" value="" />
-                  <option name="projectId" value="" />
-                  <option name="projectNumber" value="" />
+                  <option name="appId" value="com.sameer.colours" />
+                  <option name="mobileSdkAppId" value="1:261146369894:android:011f43a2cd2ef35583f2a7" />
+                  <option name="projectId" value="to-do-list-24ad8" />
+                  <option name="projectNumber" value="261146369894" />
                 </ConnectionSetting>
               </option>
               <option name="signal" value="SIGNAL_UNSPECIFIED" />

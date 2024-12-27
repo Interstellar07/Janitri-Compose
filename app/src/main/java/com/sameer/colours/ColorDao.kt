@@ -13,4 +13,7 @@ interface AppDao {
 
     @Query("SELECT * FROM ModelClassEntity")
      fun getAllColors(): LiveData<List<ModelClassEntity>>
+
+    @Query("UPDATE ModelClassEntity SET insync = 1 WHERE id = :id")
+    suspend fun updatesync(id: Int)
 }

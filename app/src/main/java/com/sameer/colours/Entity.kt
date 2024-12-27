@@ -8,5 +8,6 @@ data class ModelClassEntity(
     @PrimaryKey(autoGenerate = true)
     val id: Long = 0,
     val ccode: String,
-    val tstamp: String
+    val tstamp: String,
+    var insync : Boolean= false
 )
