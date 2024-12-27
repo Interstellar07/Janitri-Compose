@@ -58,7 +58,6 @@ class MainActivity : ComponentActivity() {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-@Preview
 fun MainWork(appviewmodel: AppViewModel, context: Context) {
 
     val liveDataList = appviewmodel.list.observeAsState(emptyList()).value
@@ -247,6 +246,7 @@ fun sendColorsToFirebase(
             if (task.isSuccessful) {
                appviewmodel.updatestatus(color.id.toInt())
             }
+
         }
     }
     onCompletion()
